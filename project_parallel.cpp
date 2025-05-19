@@ -18,7 +18,7 @@ struct ThreadData {
     int count[10];
 };
 
-pthread_barrier_t barrier; // حاجز لمزامنة الخيوط
+pthread_barrier_t barrier; 
 
 ThreadData threadData[NUM_THREADS];
 pthread_t threads[NUM_THREADS];
@@ -34,7 +34,7 @@ void* countingSortThread(void* arg) {
         data->count[digit]++;
     }
 
-    // انتظار جميع الخيوط حتى تنتهي العد
+    
     pthread_barrier_wait(&barrier);
 
     return nullptr;
@@ -47,7 +47,7 @@ void countingSortParallel(vector<int>& arr, int exp) {
 
     int chunkSize = (n + NUM_THREADS - 1) / NUM_THREADS;
 
-    // إعداد بيانات الخيوط
+
     for (int i = 0; i < NUM_THREADS; i++) {
         threadData[i].arr = &arr;
         threadData[i].exp = exp;
@@ -57,17 +57,17 @@ void countingSortParallel(vector<int>& arr, int exp) {
 
     pthread_barrier_init(&barrier, nullptr, NUM_THREADS);
 
-    // تشغيل الخيوط
+    
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_create(&threads[i], nullptr, countingSortThread, &threadData[i]);
     }
 
-    // انتظار الخيوط
+    
     for (int i = 0; i < NUM_THREADS; i++) {
         pthread_join(threads[i], nullptr);
     }
 
-    // دمج العدادات
+    
     int count[10] = {0};
     for (int digit = 0; digit < 10; digit++) {
         for (int t = 0; t < NUM_THREADS; t++) {
@@ -79,7 +79,7 @@ void countingSortParallel(vector<int>& arr, int exp) {
         count[i] += count[i - 1];
     }
 
-    // إعادة بناء المصفوفة
+    
     for (int i = n - 1; i >= 0; i--) {
         int digit = (arr[i] / exp) % 10;
         output_global[count[digit] - 1] = arr[i];
